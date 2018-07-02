@@ -9,7 +9,7 @@ CUDA_ARCH="-gencode arch=compute_30,code=sm_30 \
 # Build RoiPooling module
 cd layer_utils/roi_pooling/src/cuda
 echo "Compiling roi_pooling kernels by nvcc..."
-nvcc -c -o roi_pooling_kernel.cu.o roi_pooling_kernel.cu -x cu -Xcompiler -fPIC $CUDA_ARCH 
+nvcc -c -o roi_pooling_kernel.cu.o roi_pooling_kernel.cu -x cu -Xcompiler -fPIC -gencode arch=compute_37,code=sm_37
 cd ../../
 python build.py
 cd ../../
@@ -17,7 +17,7 @@ cd ../../
 # Build RoIAlign
 cd layer_utils/roi_align/src/cuda
 echo 'Compiling crop_and_resize kernels by nvcc...'
-nvcc -c -o crop_and_resize_kernel.cu.o crop_and_resize_kernel.cu -x cu -Xcompiler -fPIC $CUDA_ARCH
+nvcc -c -o crop_and_resize_kernel.cu.o crop_and_resize_kernel.cu -x cu -Xcompiler -fPIC -gencode arch=compute_37,code=sm_37
 cd ../../
 python build.py
 cd ../../
@@ -25,7 +25,7 @@ cd ../../
 # Build NMS
 cd nms/src/cuda
 echo "Compiling nms kernels by nvcc..."
-nvcc -c -o nms_kernel.cu.o nms_kernel.cu -x cu -Xcompiler -fPIC $CUDA_ARCH
+nvcc -c -o nms_kernel.cu.o nms_kernel.cu -x cu -Xcompiler -fPIC -gencode arch=compute_37,code=sm_37
 cd ../../
 python build.py
 cd ../
