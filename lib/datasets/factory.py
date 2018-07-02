@@ -12,6 +12,7 @@ from __future__ import print_function
 
 __sets = {}
 from datasets.pascal_voc import pascal_voc
+from datasets.ddh import ddh
 from datasets.coco import coco
 
 import numpy as np
@@ -38,6 +39,13 @@ for year in ['2015']:
   for split in ['test', 'test-dev']:
     name = 'coco_{}_{}'.format(year, split)
     __sets[name] = (lambda split=split, year=year: coco(split, year))
+
+for year in ['2018']:
+  for split in ['train', 'val', 'trainval', 'test']:
+    name = 'voc_{}_{}'.format(year, split)
+    print(name)
+    print('-------------------------------------------------')
+    __sets[name] = (lambda split=split, year=year: ddh(split, year))
 
 
 def get_imdb(name):
