@@ -116,7 +116,7 @@ class SolverWrapper(object):
     torch.manual_seed(cfg.RNG_SEED)
     # Build the main computation graph
     self.net.create_architecture(self.imdb.num_classes, tag='default',
-                                            anchor_scales=cfg.ANCHOR_SCALES,
+                                            anchor_scales=cfg.ANCHOR_SCALES,ni
                                             anchor_ratios=cfg.ANCHOR_RATIOS)
     # Define the loss
     # loss = layers['total_loss']
@@ -247,9 +247,8 @@ class SolverWrapper(object):
       utils.timer.timer.tic()
       # Get training data, one batch at a time
       blobs = self.data_layer.forward()
-
       now = time.time()
-      if iter == 1 or now - last_summary_time > cfg.TRAIN.SUMMARY_INTERVAL:
+      if False: #iter == 1 or now - last_summary_time > cfg.TRAIN.SUMMARY_INTERVAL:
         # Compute the graph with summary
         rpn_loss_cls, rpn_loss_box, loss_cls, loss_box, total_loss, summary = \
           self.net.train_step_with_summary(blobs, self.optimizer)
