@@ -33,8 +33,11 @@ import tensorboardX as tb
 
 from scipy.misc import imresize
 
+
+
 class Network(nn.Module):
   def __init__(self):
+    torch.set_printoptions(threshold=30000)
     nn.Module.__init__(self)
     self._predictions = {}
     self._losses = {}
@@ -169,6 +172,10 @@ class Network(nn.Module):
     self._anchor_length = anchor_length
 
   def _smooth_l1_loss(self, bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights, sigma=1.0, dim=[1]):
+
+    # print('bbox_inside_weights= ------   bbox_outside_weights=')
+    # print(bbox_inside_weights)
+    # print(bbox_outside_weights)
     sigma_2 = sigma ** 2
     box_diff = bbox_pred - bbox_targets
     in_box_diff = bbox_inside_weights * box_diff
@@ -191,7 +198,10 @@ class Network(nn.Module):
     rpn_cls_score = rpn_cls_score.index_select(0, rpn_select).contiguous().view(-1, 2)
     rpn_label = rpn_label.index_select(0, rpn_select).contiguous().view(-1)
     rpn_cross_entropy = F.cross_entropy(rpn_cls_score, rpn_label)
-
+    # torch.set_printoptions(threshold=30000)
+    # print(rpn_cls_score)
+    # torch.set_printoptions(threshold=30000)
+    # print(rpn_label)
     # RPN, bbox loss
     rpn_bbox_pred = self._predictions['rpn_bbox_pred']
     rpn_bbox_targets = self._anchor_targets['rpn_bbox_targets']
@@ -204,7 +214,6 @@ class Network(nn.Module):
     cls_score = self._predictions["cls_score"]
     label = self._proposal_targets["labels"].view(-1)
     cross_entropy = F.cross_entropy(cls_score.view(-1, self._num_classes), label)
-
     # RCNN, bbox loss
     bbox_pred = self._predictions['bbox_pred']
     bbox_targets = self._proposal_targets['bbox_targets']
@@ -384,12 +393,14 @@ class Network(nn.Module):
 
     rois, cls_prob, bbox_pred = self._predict()
 
+    # print(rois)
     if mode == 'TEST':
       stds = bbox_pred.data.new(cfg.TRAIN.BBOX_NORMALIZE_STDS).repeat(self._num_classes).unsqueeze(0).expand_as(bbox_pred)
       means = bbox_pred.data.new(cfg.TRAIN.BBOX_NORMALIZE_MEANS).repeat(self._num_classes).unsqueeze(0).expand_as(bbox_pred)
       self._predictions["bbox_pred"] = bbox_pred.mul(stds).add(means)
     else:
       self._add_losses() # compute losses
+      # print(self._losses['loss_box'])
 
   def init_weights(self):
     def normal_init(m, mean, stddev, truncated=False):
